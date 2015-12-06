@@ -1,0 +1,221 @@
+/*
+ * Copyright (C) 2012 Texas Instruments Incorporated - http://www.ti.com/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/dts-v1/;
+
+#include "am33xx.dtsi"
+#include "am335x-bone-common.dtsi"
+#include "am335x-bone-pinmux-panel-800x480-24bit.dtsi"
+
+#include "dt-bindings/input/input.h"
+
+/ {
+	model = "TI AM335x BeagleBone Black";
+	compatible = "ti,am335x-bone-black", "ti,am335x-bone", "ti,am33xx";
+};
+
+&ldo3_reg {
+	regulator-min-microvolt = <1800000>;
+	regulator-max-microvolt = <1800000>;
+	regulator-always-on;
+};
+
+&mmc1 {
+	vmmc-supply = <&vmmcsd_fixed>;
+};
+
+&mmc2 {
+	vmmc-supply = <&vmmcsd_fixed>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&emmc_pins>;
+	bus-width = <8>;
+	status = "okay";
+};
+
+&am33xx_pinmux {
+	bb_lcd_pwm_backlight_pins: pinmux_bb_lcd_pwm_backlight_pins {
+		pinctrl-single,pins = <
+			/* BONE_P9_14 (PIN_OUTPUT_PULLDOWN | MUX_MODE6) *//* gpmc_a2.ehrpwm1a */
+		>;
+	};
+
+	am335x_spi0_pins: pinmux_am335x_spi0_pins {
+		pinctrl-single,pins = <
+			BONE_P9_22 (PIN_INPUT_PULLUP | MUX_MODE0)		/* spi0_sclk.spi0_sclk */
+			BONE_P9_21 (PIN_INPUT_PULLUP | MUX_MODE0)		/* spi0_d0.spi0_d0 */
+			BONE_P9_18 (PIN_INPUT_PULLUP | MUX_MODE0)		/* spi0_d1.spi0_d1 */
+			BONE_P9_17 (PIN_INPUT_PULLUP | MUX_MODE0)		/* spi0_cs0.spi0_cs0 */
+		>;
+	};
+
+	am335x_spi1_pins: pinmux_am335x_spi1_pins {
+		pinctrl-single,pins = <
+			BONE_P9_31 (PIN_INPUT_PULLUP | MUX_MODE3)		/* mcasp0_aclkx.spi1_sclk */
+			BONE_P9_29 (PIN_INPUT_PULLUP | MUX_MODE3)		/* mcasp0_fsx.spi1_d0 */
+			BONE_P9_30 (PIN_INPUT_PULLUP | MUX_MODE3)		/* mcasp0_axr0.spi1_d1 */
+			BONE_P9_28 (PIN_INPUT_PULLUP | MUX_MODE3)		/* mcasp0_ahclkr.spi1_cs0 */
+		>;
+	};
+
+	uart1_pins: pinmux_uart1_pins {
+		pinctrl-single,pins = <
+			BONE_P9_24 (PIN_OUTPUT_PULLUP | MUX_MODE0)		/* uart1_txd.uart1_txd */
+			BONE_P9_26 (PIN_INPUT_PULLUP | MUX_MODE0)		/* uart1_rxd.uart1_rxd */
+		>;
+	};
+
+	led_pins: pinmux_led_pins {
+		pinctrl-single,pins = <
+			/* PWM_BUZZER */
+			BONE_P9_23 (PIN_OUTPUT_PULLUP | MUX_MODE7)
+			/* PWR_KILL */
+			BONE_P9_25 (PIN_OUTPUT_PULLUP | MUX_MODE7)
+			/* LCD_DISEN */
+			BONE_P9_27 (PIN_OUTPUT_PULLUP | MUX_MODE7)
+			/* PWM_LCD, Backlight */
+			BONE_P8_09 (PIN_OUTPUT_PULLUP | MUX_MODE7)
+		>;
+	};
+
+	key_pins: pinmux_key_pins {
+		pinctrl-single,pins = <
+			/* BATT_INT */
+			BONE_P8_10 (PIN_INPUT_PULLUP | MUX_MODE7)
+			/* FPGA Programer */
+			BONE_P9_11 (PIN_INPUT_PULLUP | MUX_MODE7)
+			BONE_P9_12 (PIN_OUTPUT_PULLUP | MUX_MODE7)
+			BONE_P9_13 (PIN_OUTPUT_PULLUP | MUX_MODE7)
+			BONE_P9_14 (PIN_INPUT_PULLUP | MUX_MODE7)
+			BONE_P9_16 (PIN_OUTPUT_PULLUP | MUX_MODE7)
+			BONE_P9_42A (PIN_INPUT_PULLUP | MUX_MODE7)
+			/* PWR_INTR */
+			BONE_P9_15 (PIN_INPUT_PULLUP | MUX_MODE7)
+		>;
+	};
+};
+
+&epwmss1 {
+    status = "okay";
+};
+
+&ehrpwm1 {
+    pinctrl-names = "default";
+    	pinctrl-0 = <&bb_lcd_pwm_backlight_pins>;
+    status = "okay";
+};
+
+&tscadc {
+    status = "okay";
+    tsc {
+        ti,wires = <4>;
+        ti,x-plate-resistance = <200>;
+        ti,coordinate-readouts = <5>;
+        ti,wire-config = <0x00 0x11 0x22 0x33>;
+    };
+
+    adc {
+        ti,adc-channels = <4 5 6 7>;
+    };
+};
+
+&lcdc {
+	status = "okay";
+};
+
+/ {
+	hdmi {
+		compatible = "ti,tilcdc,slave";
+		status = "disabled";
+	};
+
+	backlight: backlight {
+        compatible = "pwm-backlight";
+        pwms = <&ehrpwm1 0 50000 0>;
+		brightness-levels = <0 51 53 56 62 75 101 152 255>;
+        default-brightness-level = <8>;
+        status = "okay";
+    };
+
+	panel {
+		backlight = <&backlight>;
+	};
+
+	buttons: user_buttons {
+		compatible = "gpio-keys";
+		pinctrl-names = "default";
+		pinctrl-0 = <&key_pins>;
+
+		batt_int {
+			label = "batt_int";
+			linux,code = <105>;
+			gpios = <&gpio2 4 0x1>;
+			gpio-key,wakeup;
+		};
+	};
+
+	leds: user_leds {
+		compatible = "gpio-leds";
+		pinctrl-names = "default";
+		pinctrl-0 = <&led_pins>;
+
+		buzzer {
+			label = "buzzer";
+			gpios = <&gpio1 17 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "none";
+			default-state = "off";
+		};
+		lcd_disen {
+			label = "lcd_disen";
+			gpios = <&gpio3 19 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+			default-state = "off";
+		};
+		backlight {
+			label = "backlight";
+			gpios = <&gpio2 5 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "none";
+			default-state = "on";
+		};
+	};
+};
+
+&rtc {
+	system-power-controller;
+};
+
+&spi0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&am335x_spi0_pins>;
+	status = "okay";
+
+	spidev@0 {
+		compatible = "spidev";
+		spi-max-frequency = <48000000>;
+		reg = <0>;
+		spi-cpha;
+	};
+};
+
+&spi1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&am335x_spi1_pins>;
+	ti,pindir-d0-out-d1-in;
+	status = "okay";
+
+	spidev@0 {
+		compatible = "spidev";
+		spi-max-frequency = <48000000>;
+		reg = <0>;
+		spi-cpha;
+	};
+};
+
+&uart1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart1_pins>;
+	status = "okay";
+};
