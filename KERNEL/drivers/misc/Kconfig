@@ -567,4 +567,18 @@ config AM335X_CLKOUT2
 	help
 	  Say Y here to support CLKOUT2 output wave for am335x.        
 
+config AM335X_TMBACKLIGHT
+	tristate "Support Timer Backlight"
+	depends on SOC_AM33XX
+	default y
+	help
+	  Say Y here to support TIMER output PWM for backlight control.
+
+config LCM_WC1602
+	tristate "Support LCM WC1602"
+	depends on SOC_AM33XX
+	default y
+	help
+	  Say Y here to support LCM WC1602 character display module, test with am335x.
+
 endmenu

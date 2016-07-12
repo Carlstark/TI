@@ -62,3 +62,5 @@ obj-$(CONFIG_TIEQEP)		+= tieqep.o
 obj-$(CONFIG_BONE_CAPEMGR)	+= bone_capemgr.o
 obj-$(CONFIG_DEV_OVERLAYMGR)	+= devovmgr.o
 obj-$(CONFIG_AM335X_CLKOUT2)	+= am335x_clkout2.o
+obj-$(CONFIG_AM335X_TMBACKLIGHT)	+= TMbacklight.o
+obj-$(CONFIG_LCM_WC1602)	+= lcm_wc1602.o

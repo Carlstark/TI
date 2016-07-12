@@ -426,6 +426,7 @@ dtb-$(CONFIG_SOC_AM33XX) += \
 	am335x-boneblack-bbb-exp-r.dtb \
 	am335x-boneblack-bbb-exp-c.dtb \
 	am335x-boneblack-800x480.dtb \
+	am335x-boneblack-monoLCM.dtb \
 	am335x-bone-cape-bone-argus.dtb \
 	am335x-bone-can0.dtb \
 	am335x-arduino-tre.dtb \

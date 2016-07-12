@@ -18,3 +18,7 @@ if test; then
     make ARCH=arm CROSS_COMPILE=arm-linux- modules_install
     ! [ $? = 0 ] && exit 1
 fi
+
+# cp -f arch/arm/boot/dts/am335x-boneblack-800x480.dtb ../Image/am335x-boneblack.dtb
+cp -f arch/arm/boot/dts/am335x-boneblack-monoLCM.dtb ../Image/am335x-boneblack.dtb
+cp -f arch/arm/boot/zImage ../Image/zImage
