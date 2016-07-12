@@ -71,7 +71,7 @@ void save_omap_boot_params(void)
 	 * figured out using the SYS_BOOT pins.
 	 */
 	switch (boot_device) {
-#if defined(BOOT_DEVICE_UART) && !defined(CONFIG_SPL_YMODEM_SUPPORT)
+#if defined(BOOT_DEVICE_UART) && !defined(CONFIG_SPL_YMODEM_SUPPORT) && !defined(CONFIG_SPL_USB_SUPPORT)
 		case BOOT_DEVICE_UART:
 			sys_boot_device = 1;
 			break;

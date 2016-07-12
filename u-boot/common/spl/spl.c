@@ -204,6 +204,10 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 #endif
 
 	boot_device = spl_boot_device();
+#ifdef CONFIG_SPL_USB_SUPPORT
+	if (boot_device == BOOT_DEVICE_UART)
+		boot_device = BOOT_DEVICE_USB;
+#endif
 	debug("boot device - %d\n", boot_device);
 	switch (boot_device) {
 #ifdef CONFIG_SPL_RAM_DEVICE

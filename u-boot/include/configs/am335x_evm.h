@@ -175,6 +175,7 @@
 				"fi;" \
 			"fi ;" \
 		"fi;\0" \
+	"usbboot=usb reset; if fatload usb 0 ${loadaddr} ${bootenv}; then env import -t -r ${loadaddr} ${filesize}; boot; fi;\0" \
 	"spiboot=echo Booting from spi ...; " \
 		"run spiargs; " \
 		"sf probe ${spibusno}:0; " \
@@ -221,6 +222,7 @@
 	"setenv mmcdev 1; " \
 	"setenv bootpart 1:1; " \
 	"run boot;" \
+	"run usbboot;" \
 	"run failumsboot;"
 
 /* NS16550 Configuration */
@@ -245,7 +247,15 @@
 /* SPL */
 #ifndef CONFIG_NOR_BOOT
 #define CONFIG_SPL_POWER_SUPPORT
-#define CONFIG_SPL_YMODEM_SUPPORT
+#if 0
+# define CONFIG_SPL_YMODEM_SUPPORT
+#else
+# define CONFIG_SPL_USB_HOST_SUPPORT
+# define CONFIG_SPL_USB_SUPPORT
+# define CONFIG_SYS_USB_FAT_BOOT_PARTITION 1
+# define CONFIG_USB_STORAGE
+# define CONFIG_SPL_ENV_SUPPORT
+#endif
 
 /* Bootcount using the RTC block */
 #define CONFIG_BOOTCOUNT_LIMIT

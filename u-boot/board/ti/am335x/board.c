@@ -54,7 +54,7 @@ static int read_eeprom(struct am335x_baseboard_id *header)
 
 	/* read the eeprom using i2c */
 	if (i2c_read(CONFIG_SYS_I2C_EEPROM_ADDR, 0, 2, (uchar *)header,
-		     sizeof(struct am335x_baseboard_id))) {
+			 sizeof(struct am335x_baseboard_id))) {
 		puts("Could not read the EEPROM; something fundamentally"
 			" wrong on the I2C bus.\n");
 		return -EIO;
@@ -66,7 +66,7 @@ static int read_eeprom(struct am335x_baseboard_id *header)
 		 * but use only a 1 byte address
 		 */
 		if (i2c_read(CONFIG_SYS_I2C_EEPROM_ADDR, 0, 1, (uchar *)header,
-			     sizeof(struct am335x_baseboard_id))) {
+				 sizeof(struct am335x_baseboard_id))) {
 			puts("Could not read the EEPROM; something "
 				"fundamentally wrong on the I2C bus.\n");
 			return -EIO;
@@ -79,7 +79,7 @@ static int read_eeprom(struct am335x_baseboard_id *header)
 			return -EINVAL;
 #else
 			header->magic = 0xEE3355AA;
-       		strcpy (header->name, "A335BNLT");
+			strcpy (header->name, "A335BNLT");
 			strcpy (header->version, "00C0");
 #endif
 		}
@@ -244,7 +244,7 @@ void am33xx_spl_board_init(void)
 		 * on Beaglebone White
 		 */
 		if (board_is_bone(&header) && !strncmp(header.version,
-						       "00A1", 4))
+							   "00A1", 4))
 			return;
 
 		if (i2c_probe(TPS65217_CHIP_PM))
@@ -257,7 +257,7 @@ void am33xx_spl_board_init(void)
 		if (board_is_bone(&header)) {
 			uchar pmic_status_reg;
 			if (tps65217_reg_read(TPS65217_STATUS,
-					      &pmic_status_reg))
+						  &pmic_status_reg))
 				return;
 			if (!(pmic_status_reg & TPS65217_PWR_SRC_AC_BITMASK)) {
 				puts("No AC power, disabling frequency switch\n");
@@ -285,14 +285,14 @@ void am33xx_spl_board_init(void)
 		}
 
 		if (tps65217_reg_write(TPS65217_PROT_LEVEL_NONE,
-				       TPS65217_POWER_PATH,
-				       usb_cur_lim,
-				       TPS65217_USB_INPUT_CUR_LIMIT_MASK))
+					   TPS65217_POWER_PATH,
+					   usb_cur_lim,
+					   TPS65217_USB_INPUT_CUR_LIMIT_MASK))
 			puts("tps65217_reg_write failure\n");
 
 		/* Set DCDC3 (CORE) voltage to 1.125V */
 		if (tps65217_voltage_update(TPS65217_DEFDCDC3,
-					    TPS65217_DCDC_VOLT_SEL_1125MV)) {
+						TPS65217_DCDC_VOLT_SEL_1125MV)) {
 			puts("tps65217_voltage_update failure\n");
 			return;
 		}
@@ -312,28 +312,28 @@ void am33xx_spl_board_init(void)
 		 */
 		if (board_is_bone(&header)) {
 			if (tps65217_reg_write(TPS65217_PROT_LEVEL_2,
-					       TPS65217_DEFLS1,
-					       TPS65217_LDO_VOLTAGE_OUT_3_3,
-					       TPS65217_LDO_MASK))
+						   TPS65217_DEFLS1,
+						   TPS65217_LDO_VOLTAGE_OUT_3_3,
+						   TPS65217_LDO_MASK))
 				puts("tps65217_reg_write failure\n");
 		} else {
 			if (tps65217_reg_write(TPS65217_PROT_LEVEL_2,
-					       TPS65217_DEFLS1,
-					       TPS65217_LDO_VOLTAGE_OUT_1_8,
-					       TPS65217_LDO_MASK))
+						   TPS65217_DEFLS1,
+						   TPS65217_LDO_VOLTAGE_OUT_1_8,
+						   TPS65217_LDO_MASK))
 				puts("tps65217_reg_write failure\n");
 		}
 
 		if (tps65217_reg_write(TPS65217_PROT_LEVEL_2,
-				       TPS65217_DEFLS2,
-				       TPS65217_LDO_VOLTAGE_OUT_3_3,
-				       TPS65217_LDO_MASK))
+					   TPS65217_DEFLS2,
+					   TPS65217_LDO_VOLTAGE_OUT_3_3,
+					   TPS65217_LDO_MASK))
 			puts("tps65217_reg_write failure\n");
 	} else {
 		int sil_rev;
 
 		/*
-		 * The GP EVM, IDK and EVM SK use a TPS65910 PMIC.  For all
+		 * The GP EVM, IDK and EVM SK use a TPS65910 PMIC.	For all
 		 * MPU frequencies we support we use a CORE voltage of
 		 * 1.1375V.  For MPU voltage we need to switch based on
 		 * the frequency we are running at.
@@ -347,7 +347,7 @@ void am33xx_spl_board_init(void)
 		 */
 		sil_rev = readl(&cdev->deviceid) >> 28;
 		mpu_vdd = am335x_get_tps65910_mpu_vdd(sil_rev,
-						      dpll_mpu_opp100.m);
+							  dpll_mpu_opp100.m);
 
 		/* Tell the TPS65910 to use i2c */
 		tps65910_set_i2c_control();
@@ -480,7 +480,7 @@ void sdram_init(void)
 #endif
 
 /*
- * Basic board specific setup.  Pinmux has been handled already.
+ * Basic board specific setup.	Pinmux has been handled already.
  */
 int board_init(void)
 {
@@ -646,7 +646,7 @@ int board_eth_init(bd_t *bis)
 		puts("Could not get board ID.\n");
 
 	if (board_is_bone(&header) || board_is_bone_lt(&header) ||
-	    board_is_idk(&header)) {
+		board_is_idk(&header)) {
 		writel(MII_MODE_ENABLE, &cdev->miisel);
 		cpsw_slaves[0].phy_if = cpsw_slaves[1].phy_if =
 				PHY_INTERFACE_MODE_MII;
